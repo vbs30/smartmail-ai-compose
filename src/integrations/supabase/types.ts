@@ -9,13 +9,93 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      emails: {
+        Row: {
+          body: string
+          business_type: string
+          context: string
+          created_at: string
+          id: string
+          recipient_type: string
+          subject: string
+          tone: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          business_type: string
+          context: string
+          created_at?: string
+          id?: string
+          recipient_type: string
+          subject: string
+          tone: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          business_type?: string
+          context?: string
+          created_at?: string
+          id?: string
+          recipient_type?: string
+          subject?: string
+          tone?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          daily_generations_count: number
+          daily_generations_reset_date: string
+          email: string
+          id: string
+          is_pro: boolean
+          name: string | null
+          stripe_customer_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          daily_generations_count?: number
+          daily_generations_reset_date?: string
+          email: string
+          id?: string
+          is_pro?: boolean
+          name?: string | null
+          stripe_customer_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          daily_generations_count?: number
+          daily_generations_reset_date?: string
+          email?: string
+          id?: string
+          is_pro?: boolean
+          name?: string | null
+          stripe_customer_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      reset_daily_generations: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
