@@ -33,11 +33,11 @@ Format your response as JSON with "subject" and "body" fields.`
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+        'Authorization': `Bearer ${Deno.env.get('SMART_EMAIL_SECRET_KEY')}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4-turbo-preview',
+        model: 'gpt-4.1-2025-04-14',
         messages: [
           {
             role: 'user',
