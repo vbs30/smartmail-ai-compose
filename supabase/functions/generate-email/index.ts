@@ -1,6 +1,5 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -17,24 +16,8 @@ serve(async (req) => {
 
     console.log('Received request:', { type, recipientType, businessType, context, tone })
 
-    // Check if API key is available
-    const apiKey = Deno.env.get('SMART_EMAIL_SECRET_KEY')
-    if (!apiKey) {
-      console.error('OpenAI API key not found')
-      return new Response(
-        JSON.stringify({ error: 'OpenAI API key not configured' }),
-        { 
-          status: 500,
-          headers: { 
-            ...corsHeaders,
-            'Content-Type': 'application/json' 
-          } 
-        }
-      )
-    }
-
-    // Create OpenAI prompt
-    const prompt = `You are a professional business email writing assistant. Write a ${tone} email from a ${businessType} to a ${recipientType}. 
+    // Create prompt for email generation
+    const prompt = `Write a professional ${tone} business email from a ${businessType} to a ${recipientType}.
 
 Context: ${context}
 
@@ -42,56 +25,78 @@ Requirements:
 - Generate a compelling subject line
 - Write a professional email body that's concise but effective
 - Match the requested tone (${tone})
-- Avoid generic phrases and make it specific to the context
 - Keep the email between 100-200 words
 - Include a clear call-to-action when appropriate
 
-Format your response as JSON with "subject" and "body" fields.`
+Please format your response as:
+Subject: [Your subject line here]
 
-    console.log('Calling OpenAI API...')
+Body:
+[Your email body here]`
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    console.log('Calling Hugging Face API...')
+
+    // Using Hugging Face's free inference API
+    const response = await fetch('https://api-inference.huggingface.co/models/microsoft/DialoGPT-large', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        max_tokens: 1000,
-        temperature: 0.7,
+        inputs: prompt,
+        parameters: {
+          max_new_tokens: 500,
+          temperature: 0.7,
+          return_full_text: false
+        }
       }),
     })
 
-    console.log('OpenAI API response status:', response.status)
+    console.log('Hugging Face API response status:', response.status)
 
-    const data = await response.json()
-    console.log('OpenAI API response:', data)
-    
     if (!response.ok) {
-      const errorMessage = data.error?.message || 'Failed to generate email'
-      console.error('OpenAI API error:', errorMessage)
+      // If the model is loading, try a different approach
+      console.log('Trying alternative free model...')
       
-      // Provide user-friendly error messages
-      let userMessage = 'Failed to generate email. Please try again.'
-      if (errorMessage.includes('quota')) {
-        userMessage = 'OpenAI API quota exceeded. Please check your OpenAI billing or try again later.'
-      } else if (errorMessage.includes('rate limit')) {
-        userMessage = 'Rate limit exceeded. Please wait a moment before trying again.'
-      } else if (errorMessage.includes('invalid')) {
-        userMessage = 'Invalid API key. Please check your OpenAI configuration.'
+      // Use a simple text generation approach as fallback
+      const fallbackResponse = await fetch('https://api-inference.huggingface.co/models/gpt2', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          inputs: `Subject: Professional ${type} email\n\nDear ${recipientType},\n\n${context}\n\nBest regards,\n${businessType}`,
+          parameters: {
+            max_new_tokens: 200,
+            temperature: 0.8
+          }
+        }),
+      })
+
+      if (!fallbackResponse.ok) {
+        // Generate a simple template-based email as final fallback
+        console.log('Using template-based generation')
+        const emailData = generateTemplateEmail(type, recipientType, businessType, context, tone)
+        
+        return new Response(
+          JSON.stringify(emailData),
+          { 
+            headers: { 
+              ...corsHeaders,
+              'Content-Type': 'application/json' 
+            } 
+          }
+        )
       }
+
+      const fallbackData = await fallbackResponse.json()
+      const generatedText = Array.isArray(fallbackData) ? fallbackData[0]?.generated_text : fallbackData.generated_text
+      
+      const emailData = parseEmailFromText(generatedText || '')
       
       return new Response(
-        JSON.stringify({ error: userMessage }),
+        JSON.stringify(emailData),
         { 
-          status: 500,
           headers: { 
             ...corsHeaders,
             'Content-Type': 'application/json' 
@@ -100,25 +105,11 @@ Format your response as JSON with "subject" and "body" fields.`
       )
     }
 
-    const content = data.choices[0].message.content
-    console.log('Generated content:', content)
+    const data = await response.json()
+    console.log('Hugging Face API response:', data)
     
-    // Try to parse JSON response
-    let emailData
-    try {
-      emailData = JSON.parse(content)
-    } catch (e) {
-      console.log('Failed to parse JSON, trying manual extraction')
-      // If JSON parsing fails, try to extract content manually
-      const lines = content.split('\n').filter(line => line.trim())
-      const subjectLine = lines.find(line => line.toLowerCase().includes('subject'))
-      const bodyStart = lines.findIndex(line => line.toLowerCase().includes('body') || line.toLowerCase().includes('email'))
-      
-      emailData = {
-        subject: subjectLine ? subjectLine.replace(/^.*subject[:\s]+/i, '').replace(/"/g, '') : 'Professional Business Email',
-        body: bodyStart > -1 ? lines.slice(bodyStart + 1).join('\n') : content
-      }
-    }
+    const generatedText = Array.isArray(data) ? data[0]?.generated_text : data.generated_text
+    const emailData = parseEmailFromText(generatedText || '')
 
     console.log('Final email data:', emailData)
 
@@ -133,15 +124,138 @@ Format your response as JSON with "subject" and "body" fields.`
     )
   } catch (error) {
     console.error('Error generating email:', error)
-    return new Response(
-      JSON.stringify({ error: 'An unexpected error occurred. Please try again.' }),
-      { 
-        status: 500,
-        headers: { 
-          ...corsHeaders,
-          'Content-Type': 'application/json' 
-        } 
-      }
-    )
+    
+    // Generate a template-based email as final fallback
+    try {
+      const { type, recipientType, businessType, context, tone } = await req.json()
+      const emailData = generateTemplateEmail(type, recipientType, businessType, context, tone)
+      
+      return new Response(
+        JSON.stringify(emailData),
+        { 
+          headers: { 
+            ...corsHeaders,
+            'Content-Type': 'application/json' 
+          } 
+        }
+      )
+    } catch (fallbackError) {
+      return new Response(
+        JSON.stringify({ error: 'Unable to generate email. Please try again.' }),
+        { 
+          status: 500,
+          headers: { 
+            ...corsHeaders,
+            'Content-Type': 'application/json' 
+          } 
+        }
+      )
+    }
   }
 })
+
+function parseEmailFromText(text: string) {
+  const lines = text.split('\n').filter(line => line.trim())
+  
+  let subject = 'Professional Business Email'
+  let body = text
+  
+  // Try to extract subject
+  const subjectLine = lines.find(line => 
+    line.toLowerCase().includes('subject:') || 
+    line.toLowerCase().startsWith('subject')
+  )
+  
+  if (subjectLine) {
+    subject = subjectLine.replace(/^.*subject[:\s]+/i, '').trim()
+    // Remove subject from body
+    body = text.replace(subjectLine, '').trim()
+  }
+  
+  // Clean up the body
+  body = body.replace(/^subject:.*$/im, '').trim()
+  
+  return { subject, body }
+}
+
+function generateTemplateEmail(type: string, recipientType: string, businessType: string, context: string, tone: string) {
+  const templates = {
+    cold_email: {
+      subject: `Partnership Opportunity with ${businessType}`,
+      body: `Dear ${recipientType},
+
+I hope this email finds you well. I'm reaching out from ${businessType} regarding ${context}.
+
+We believe there's a great opportunity for collaboration that could benefit both of our organizations. Our expertise in this area has helped numerous clients achieve their goals.
+
+${tone === 'formal' ? 'I would be delighted to schedule a brief call to discuss this opportunity further.' : 'Would love to hop on a quick call to chat about this!'}
+
+Best regards,
+${businessType} Team`
+    },
+    follow_up: {
+      subject: `Following up on our conversation`,
+      body: `Hi there,
+
+I wanted to follow up on our previous conversation regarding ${context}.
+
+${tone === 'formal' ? 'I trust you have had time to consider our proposal.' : 'Hope you\'ve had a chance to think things over!'} 
+
+From ${businessType}, we're committed to providing excellent service to ${recipientType}s like yourself.
+
+Please let me know if you have any questions or if there's anything else I can help with.
+
+Best regards,
+${businessType} Team`
+    },
+    offer: {
+      subject: `Special Offer from ${businessType}`,
+      body: `Dear ${recipientType},
+
+We have an exciting offer that I believe would be of great interest to you!
+
+${context}
+
+As a ${businessType}, we're committed to providing exceptional value to our clients. This limited-time offer is our way of showing appreciation for ${recipientType}s like yourself.
+
+${tone === 'formal' ? 'Please feel free to contact us to discuss this opportunity.' : 'Let\'s chat about how this can benefit you!'}
+
+Best regards,
+${businessType} Team`
+    },
+    apology: {
+      subject: `Our Sincere Apologies`,
+      body: `Dear ${recipientType},
+
+I am writing to sincerely apologize regarding ${context}.
+
+As a ${businessType}, we take full responsibility for this situation and are committed to making things right. We value our relationship with ${recipientType}s like yourself.
+
+${tone === 'formal' ? 'We would appreciate the opportunity to discuss how we can resolve this matter to your satisfaction.' : 'We\'d love to make this right - let\'s talk!'}
+
+Thank you for your understanding.
+
+Sincerely,
+${businessType} Team`
+    },
+    partnership: {
+      subject: `Partnership Proposal from ${businessType}`,
+      body: `Dear ${recipientType},
+
+I hope this message finds you well. I'm reaching out to explore a potential partnership opportunity.
+
+${context}
+
+As a ${businessType}, we believe that collaborating with ${recipientType}s like yourself could create mutual value and drive success for both parties.
+
+${tone === 'formal' ? 'I would welcome the opportunity to discuss this proposal in more detail at your convenience.' : 'Would love to brainstorm some ideas together!'}
+
+Looking forward to hearing from you.
+
+Best regards,
+${businessType} Team`
+    }
+  }
+  
+  return templates[type as keyof typeof templates] || templates.cold_email
+}
