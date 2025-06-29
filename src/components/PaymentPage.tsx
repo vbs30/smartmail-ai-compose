@@ -1,67 +1,173 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Crown, CreditCard, Lock, QrCode, Smartphone } from "lucide-react";
+import { ArrowLeft, Crown, CreditCard, Lock, QrCode, Smartphone, Wallet, CreditCard as CardIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+
+// Razorpay types
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 const PaymentPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [processing, setProcessing] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'upi'>('card');
+  const [razorpayLoaded, setRazorpayLoaded] = useState(false);
   const [formData, setFormData] = useState({
-    cardNumber: "",
-    expiryDate: "",
-    cvv: "",
-    cardName: "",
     email: "",
-    upiId: "",
+    name: "",
   });
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
+  useEffect(() => {
+    // Load Razorpay script
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.onload = () => setRazorpayLoaded(true);
+    document.body.appendChild(script);
+
+    // Get user info
+    const getUserInfo = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setFormData({
+          email: user.email || "",
+          name: user.user_metadata?.full_name || user.user_metadata?.name || "",
+        });
+      }
+    };
+
+    getUserInfo();
+
+    return () => {
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
+  }, []);
 
   const handlePayment = async () => {
-    if (paymentMethod === 'card') {
-      if (!formData.cardNumber || !formData.expiryDate || !formData.cvv || !formData.cardName || !formData.email) {
-        toast({
-          title: "Missing Information",
-          description: "Please fill in all payment details.",
-          variant: "destructive",
-        });
-        return;
-      }
-    } else {
-      if (!formData.upiId || !formData.email) {
-        toast({
-          title: "Missing Information",
-          description: "Please fill in UPI ID and email.",
-          variant: "destructive",
-        });
-        return;
-      }
+    if (!formData.email || !formData.name) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in your name and email.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!razorpayLoaded) {
+      toast({
+        title: "Payment System Loading",
+        description: "Please wait for the payment system to load.",
+        variant: "destructive",
+      });
+      return;
     }
 
     setProcessing(true);
-    
-    // Simulate payment processing
-    setTimeout(() => {
-      toast({
-        title: "Payment Successful!",
-        description: "Welcome to SmartMail AI Pro! Your account has been upgraded.",
-      });
+
+    try {
+      // Get auth token
+      const { data: { session } } = await supabase.auth.getSession();
       
-      // In a real app, you'd update the user's pro status here
-      navigate("/dashboard");
+      if (!session) {
+        throw new Error('User not authenticated');
+      }
+
+      // Create Razorpay order
+      const { data: orderData, error: orderError } = await supabase.functions.invoke(
+        'create-razorpay-order',
+        {
+          body: { amount: 30, currency: 'INR' },
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        }
+      );
+
+      if (orderError) {
+        throw orderError;
+      }
+
+      // Configure Razorpay options
+      const options = {
+        key: orderData.keyId,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: 'SmartMail AI',
+        description: 'Pro Monthly Subscription',
+        order_id: orderData.orderId,
+        prefill: {
+          name: formData.name,
+          email: formData.email,
+        },
+        theme: {
+          color: '#3B82F6'
+        },
+        handler: async function (response: any) {
+          try {
+            // Verify payment
+            const { error: verifyError } = await supabase.functions.invoke(
+              'verify-razorpay-payment',
+              {
+                body: {
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                },
+                headers: {
+                  Authorization: `Bearer ${session.access_token}`,
+                },
+              }
+            );
+
+            if (verifyError) {
+              throw verifyError;
+            }
+
+            toast({
+              title: "Payment Successful!",
+              description: "Welcome to SmartMail AI Pro! Your account has been upgraded.",
+            });
+
+            navigate("/dashboard");
+          } catch (error) {
+            console.error('Payment verification error:', error);
+            toast({
+              title: "Payment Verification Failed",
+              description: "Please contact support if money was deducted.",
+              variant: "destructive",
+            });
+          }
+        },
+        modal: {
+          ondismiss: function() {
+            setProcessing(false);
+          }
+        }
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+
+    } catch (error) {
+      console.error('Payment error:', error);
+      toast({
+        title: "Payment Failed",
+        description: "Unable to process payment. Please try again.",
+        variant: "destructive",
+      });
       setProcessing(false);
-    }, 2000);
+    }
   };
 
   return (
@@ -137,32 +243,19 @@ const PaymentPage = () => {
               <CardDescription>
                 <div className="flex items-center">
                   <Lock className="w-4 h-4 mr-1" />
-                  Your payment information is secure and encrypted
+                  Secure payment powered by Razorpay
                 </div>
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Payment Method Selection */}
-              <div className="space-y-3">
-                <Label>Payment Method</Label>
-                <div className="grid grid-cols-2 gap-4">
-                  <Button
-                    variant={paymentMethod === 'card' ? 'default' : 'outline'}
-                    onClick={() => setPaymentMethod('card')}
-                    className="h-16 flex flex-col items-center justify-center"
-                  >
-                    <CreditCard className="w-5 h-5 mb-1" />
-                    <span className="text-sm">Card</span>
-                  </Button>
-                  <Button
-                    variant={paymentMethod === 'upi' ? 'default' : 'outline'}
-                    onClick={() => setPaymentMethod('upi')}
-                    className="h-16 flex flex-col items-center justify-center"
-                  >
-                    <Smartphone className="w-5 h-5 mb-1" />
-                    <span className="text-sm">UPI</span>
-                  </Button>
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="name">Full Name</Label>
+                <Input
+                  id="name"
+                  placeholder="John Doe"
+                  value={formData.name}
+                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                />
               </div>
 
               <div className="space-y-2">
@@ -172,83 +265,39 @@ const PaymentPage = () => {
                   type="email"
                   placeholder="your@email.com"
                   value={formData.email}
-                  onChange={(e) => handleInputChange("email", e.target.value)}
+                  onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                 />
               </div>
 
-              {paymentMethod === 'card' ? (
-                <>
-                  <div className="space-y-2">
-                    <Label htmlFor="card-name">Cardholder Name</Label>
-                    <Input
-                      id="card-name"
-                      placeholder="John Doe"
-                      value={formData.cardName}
-                      onChange={(e) => handleInputChange("cardName", e.target.value)}
-                    />
+              {/* Payment Methods Info */}
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h4 className="font-medium mb-3 text-blue-800">Supported Payment Methods</h4>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="flex items-center">
+                    <CardIcon className="w-4 h-4 mr-2 text-blue-600" />
+                    <span>Credit/Debit Cards</span>
                   </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="card-number">Card Number</Label>
-                    <Input
-                      id="card-number"
-                      placeholder="1234 5678 9012 3456"
-                      value={formData.cardNumber}
-                      onChange={(e) => handleInputChange("cardNumber", e.target.value)}
-                    />
+                  <div className="flex items-center">
+                    <Smartphone className="w-4 h-4 mr-2 text-blue-600" />
+                    <span>UPI (GPay, PhonePe)</span>
                   </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="expiry">Expiry Date</Label>
-                      <Input
-                        id="expiry"
-                        placeholder="MM/YY"
-                        value={formData.expiryDate}
-                        onChange={(e) => handleInputChange("expiryDate", e.target.value)}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="cvv">CVV</Label>
-                      <Input
-                        id="cvv"
-                        placeholder="123"
-                        value={formData.cvv}
-                        onChange={(e) => handleInputChange("cvv", e.target.value)}
-                      />
-                    </div>
+                  <div className="flex items-center">
+                    <Wallet className="w-4 h-4 mr-2 text-blue-600" />
+                    <span>Net Banking</span>
                   </div>
-                </>
-              ) : (
-                <>
-                  <div className="space-y-2">
-                    <Label htmlFor="upi-id">UPI ID</Label>
-                    <Input
-                      id="upi-id"
-                      placeholder="yourname@paytm"
-                      value={formData.upiId}
-                      onChange={(e) => handleInputChange("upiId", e.target.value)}
-                    />
+                  <div className="flex items-center">
+                    <QrCode className="w-4 h-4 mr-2 text-blue-600" />
+                    <span>Wallets & QR</span>
                   </div>
-                  
-                  <div className="bg-blue-50 p-4 rounded-lg text-center">
-                    <QrCode className="w-12 h-12 mx-auto mb-2 text-blue-600" />
-                    <p className="text-sm text-blue-800 font-medium">
-                      Scan QR Code to Pay
-                    </p>
-                    <p className="text-xs text-blue-600 mt-1">
-                      Works with Google Pay, PhonePe, Paytm & all UPI apps
-                    </p>
-                  </div>
-                </>
-              )}
+                </div>
+              </div>
 
               <Button
                 onClick={handlePayment}
-                disabled={processing}
+                disabled={processing || !razorpayLoaded}
                 className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600"
               >
-                {processing ? "Processing..." : "Complete Payment"}
+                {processing ? "Processing..." : "Pay ₹30"}
               </Button>
 
               <div className="text-xs text-gray-500 text-center">
