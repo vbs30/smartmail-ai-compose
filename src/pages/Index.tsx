@@ -72,6 +72,15 @@ const Index = () => {
     }
   };
 
+  const handleUpgradeClick = () => {
+    if (user) {
+      navigate("/payment");
+    } else {
+      // User needs to sign up/login first
+      handleGetStarted();
+    }
+  };
+
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
@@ -118,7 +127,7 @@ const Index = () => {
             tailored to your business needs. From cold outreach to follow-ups, we've got you covered.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex justify-center">
             <Button 
               size="lg" 
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-3"
@@ -126,9 +135,6 @@ const Index = () => {
             >
               Get Started Free
               <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button variant="outline" size="lg" className="text-lg px-8 py-3">
-              Watch Demo
             </Button>
           </div>
           
@@ -197,7 +203,7 @@ const Index = () => {
           <Card className="border-2 hover:border-blue-200 transition-colors">
             <CardHeader className="text-center">
               <CardTitle className="text-2xl">Free Plan</CardTitle>
-              <div className="text-4xl font-bold text-blue-600 my-4">$0</div>
+              <div className="text-4xl font-bold text-blue-600 my-4">₹0</div>
               <CardDescription>Perfect for getting started</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -237,8 +243,11 @@ const Index = () => {
                 Pro Plan
               </CardTitle>
               <div className="text-4xl font-bold text-yellow-600 my-4">
-                $9.99
+                ₹30
                 <span className="text-lg font-normal text-gray-500">/month</span>
+              </div>
+              <div className="text-sm text-gray-500">
+                or ₹350/year (Save ₹10!)
               </div>
               <CardDescription>For professionals and businesses</CardDescription>
             </CardHeader>
@@ -261,7 +270,7 @@ const Index = () => {
               </div>
               <Button 
                 className="w-full mt-6 bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600" 
-                onClick={() => navigate("/payment")}
+                onClick={handleUpgradeClick}
               >
                 <Crown className="w-4 h-4 mr-2" />
                 Upgrade to Pro
@@ -278,7 +287,7 @@ const Index = () => {
           <p className="text-xl opacity-90 mb-8">
             Join thousands of professionals who save hours every week with SmartMail AI
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex justify-center">
             <Button 
               size="lg" 
               variant="secondary" 

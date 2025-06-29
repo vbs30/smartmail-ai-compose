@@ -59,7 +59,7 @@ const ProUpgradeModal = ({ isOpen, onClose, onUpgrade }: ProUpgradeModalProps) =
                 <Crown className="w-5 h-5 mr-2 text-yellow-500" />
                 Pro Plan
               </CardTitle>
-              <CardDescription>$9.99/month</CardDescription>
+              <CardDescription>₹30/month</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center">
