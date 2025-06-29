@@ -303,8 +303,30 @@ const Index = () => {
 
       {/* Footer */}
       <footer className="container mx-auto px-4 py-8 border-t">
-        <div className="text-center text-gray-600">
-          <p>&copy; 2024 SmartMail AI. All rights reserved.</p>
+        <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+          <div className="text-center md:text-left text-gray-600">
+            <p>&copy; 2024 SmartMail AI. All rights reserved.</p>
+          </div>
+          <div className="flex space-x-6 text-sm">
+            <a 
+              href="/contact" 
+              className="text-gray-600 hover:text-blue-600 transition-colors"
+            >
+              Contact Us
+            </a>
+            <a 
+              href="/privacy-policy" 
+              className="text-gray-600 hover:text-blue-600 transition-colors"
+            >
+              Privacy Policy
+            </a>
+            <a 
+              href="/terms-conditions" 
+              className="text-gray-600 hover:text-blue-600 transition-colors"
+            >
+              Terms & Conditions
+            </a>
+          </div>
         </div>
       </footer>
     </div>
