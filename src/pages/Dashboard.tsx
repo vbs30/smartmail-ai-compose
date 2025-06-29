@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -13,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Mail, Copy, Save, History, LogOut, Crown, Loader2 } from "lucide-react";
 import { User } from "@supabase/supabase-js";
+import ProUpgradeModal from "@/components/ProUpgradeModal";
 
 interface Profile {
   id: string;
@@ -35,6 +35,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -59,6 +60,9 @@ const Dashboard = () => {
       }
       
       setUser(user);
+      
+      // Call the reset function before getting profile
+      await supabase.rpc('reset_daily_generations_if_needed');
       
       // Get user profile
       const { data: profile, error } = await supabase
@@ -89,6 +93,10 @@ const Dashboard = () => {
     navigate("/");
   };
 
+  const handleUpgradeClick = () => {
+    navigate("/payment");
+  };
+
   const generateEmail = async () => {
     if (!emailType || !recipientType || !businessType || !context || !tone) {
       toast({
@@ -100,11 +108,7 @@ const Dashboard = () => {
     }
 
     if (!profile?.is_pro && profile?.daily_generations_count >= 3) {
-      toast({
-        title: "Daily Limit Reached",
-        description: "You've reached your daily limit of 3 email generations. Upgrade to Pro for unlimited access!",
-        variant: "destructive",
-      });
+      setShowUpgradeModal(true);
       return;
     }
 
@@ -258,6 +262,15 @@ const Dashboard = () => {
               </div>
             </div>
             <div className="flex items-center space-x-4">
+              {!profile?.is_pro && (
+                <Button 
+                  onClick={handleUpgradeClick}
+                  className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600"
+                >
+                  <Crown className="w-4 h-4 mr-2" />
+                  Upgrade to Pro
+                </Button>
+              )}
               {profile?.is_pro && (
                 <Button variant="outline" onClick={() => navigate("/history")}>
                   <History className="w-4 h-4 mr-2" />
@@ -434,6 +447,12 @@ const Dashboard = () => {
           </Card>
         </div>
       </div>
+
+      <ProUpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        onUpgrade={handleUpgradeClick}
+      />
     </div>
   );
 };
