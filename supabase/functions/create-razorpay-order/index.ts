@@ -1,6 +1,5 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -8,17 +7,27 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
+    console.log('Razorpay order creation started')
+    
     const { amount, currency = 'INR' } = await req.json()
+    console.log('Request data:', { amount, currency })
     
     const razorpayKeyId = Deno.env.get('RAZORPAY_KEY_ID')
     const razorpayKeySecret = Deno.env.get('RAZORPAY_KEY_SECRET')
 
+    console.log('Environment check:', {
+      hasKeyId: !!razorpayKeyId,
+      hasKeySecret: !!razorpayKeySecret
+    })
+
     if (!razorpayKeyId || !razorpayKeySecret) {
+      console.error('Missing Razorpay credentials')
       throw new Error('Razorpay credentials not configured')
     }
 
@@ -32,6 +41,8 @@ serve(async (req) => {
       }
     }
 
+    console.log('Creating order with Razorpay API:', orderData)
+
     const response = await fetch('https://api.razorpay.com/v1/orders', {
       method: 'POST',
       headers: {
@@ -42,25 +53,31 @@ serve(async (req) => {
     })
 
     const order = await response.json()
+    console.log('Razorpay API response:', { status: response.status, order })
 
     if (!response.ok) {
+      console.error('Razorpay API error:', order)
       throw new Error(order.error?.description || 'Failed to create Razorpay order')
     }
 
+    const result = { 
+      orderId: order.id,
+      amount: order.amount,
+      currency: order.currency,
+      keyId: razorpayKeyId
+    }
+
+    console.log('Order created successfully:', result)
+
     return new Response(
-      JSON.stringify({ 
-        orderId: order.id,
-        amount: order.amount,
-        currency: order.currency,
-        keyId: razorpayKeyId
-      }),
+      JSON.stringify(result),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       },
     )
   } catch (error) {
-    console.error('Error:', error)
+    console.error('Error in create-razorpay-order:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
       {
