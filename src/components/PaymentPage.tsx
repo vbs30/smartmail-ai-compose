@@ -32,6 +32,13 @@ const PaymentPage = () => {
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
     script.onload = () => setRazorpayLoaded(true);
+    script.onerror = () => {
+      toast({
+        title: "Script Loading Failed",
+        description: "Failed to load Razorpay. Please refresh the page.",
+        variant: "destructive",
+      });
+    };
     document.body.appendChild(script);
 
     // Get user info
@@ -52,7 +59,7 @@ const PaymentPage = () => {
         document.body.removeChild(script);
       }
     };
-  }, []);
+  }, [toast]);
 
   const handlePayment = async () => {
     if (!formData.email || !formData.name) {
@@ -80,8 +87,16 @@ const PaymentPage = () => {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
-        throw new Error('User not authenticated');
+        toast({
+          title: "Authentication Required",
+          description: "Please sign in to upgrade to Pro.",
+          variant: "destructive",
+        });
+        navigate("/");
+        return;
       }
+
+      console.log("Creating Razorpay order...");
 
       // Create Razorpay order
       const { data: orderData, error: orderError } = await supabase.functions.invoke(
@@ -95,8 +110,11 @@ const PaymentPage = () => {
       );
 
       if (orderError) {
-        throw orderError;
+        console.error("Order creation error:", orderError);
+        throw new Error(orderError.message || 'Failed to create order');
       }
+
+      console.log("Order created successfully:", orderData);
 
       // Configure Razorpay options
       const options = {
@@ -114,6 +132,7 @@ const PaymentPage = () => {
           color: '#3B82F6'
         },
         handler: async function (response: any) {
+          console.log("Payment successful:", response);
           try {
             // Verify payment
             const { error: verifyError } = await supabase.functions.invoke(
@@ -131,7 +150,8 @@ const PaymentPage = () => {
             );
 
             if (verifyError) {
-              throw verifyError;
+              console.error("Payment verification error:", verifyError);
+              throw new Error(verifyError.message || 'Payment verification failed');
             }
 
             toast({
@@ -147,15 +167,19 @@ const PaymentPage = () => {
               description: "Please contact support if money was deducted.",
               variant: "destructive",
             });
+          } finally {
+            setProcessing(false);
           }
         },
         modal: {
           ondismiss: function() {
+            console.log("Payment modal dismissed");
             setProcessing(false);
           }
         }
       };
 
+      console.log("Opening Razorpay checkout...");
       const razorpay = new window.Razorpay(options);
       razorpay.open();
 
@@ -163,7 +187,7 @@ const PaymentPage = () => {
       console.error('Payment error:', error);
       toast({
         title: "Payment Failed",
-        description: "Unable to process payment. Please try again.",
+        description: error instanceof Error ? error.message : "Unable to process payment. Please try again.",
         variant: "destructive",
       });
       setProcessing(false);
@@ -176,9 +200,9 @@ const PaymentPage = () => {
       <header className="bg-white border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center">
-            <Button variant="ghost" onClick={() => navigate("/dashboard")}>
+            <Button variant="ghost" onClick={() => navigate(-1)}>
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Dashboard
+              Back
             </Button>
           </div>
         </div>
@@ -291,6 +315,12 @@ const PaymentPage = () => {
                   </div>
                 </div>
               </div>
+
+              {!razorpayLoaded && (
+                <div className="text-sm text-amber-600 bg-amber-50 p-3 rounded-lg">
+                  Loading payment system...
+                </div>
+              )}
 
               <Button
                 onClick={handlePayment}
