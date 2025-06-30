@@ -73,12 +73,8 @@ const Index = () => {
   };
 
   const handleUpgradeClick = () => {
-    if (user) {
-      navigate("/payment");
-    } else {
-      // User needs to sign up/login first
-      handleGetStarted();
-    }
+    // Always navigate to payment page, regardless of login status
+    navigate("/payment");
   };
 
   if (loading) {
