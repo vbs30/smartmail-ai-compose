@@ -98,14 +98,11 @@ const PaymentPage = () => {
 
       console.log("Creating Razorpay order...");
 
-      // Create Razorpay order
+      // Create Razorpay order using the correct function name
       const { data: orderData, error: orderError } = await supabase.functions.invoke(
         'create-razorpay-order',
         {
-          body: { amount: 30, currency: 'INR' },
-          headers: {
-            Authorization: `Bearer ${session.access_token}`,
-          },
+          body: { amount: 30, currency: 'INR' }
         }
       );
 
@@ -134,7 +131,7 @@ const PaymentPage = () => {
         handler: async function (response: any) {
           console.log("Payment successful:", response);
           try {
-            // Verify payment
+            // Verify payment using the correct function name
             const { error: verifyError } = await supabase.functions.invoke(
               'verify-razorpay-payment',
               {
@@ -142,10 +139,7 @@ const PaymentPage = () => {
                   razorpay_order_id: response.razorpay_order_id,
                   razorpay_payment_id: response.razorpay_payment_id,
                   razorpay_signature: response.razorpay_signature,
-                },
-                headers: {
-                  Authorization: `Bearer ${session.access_token}`,
-                },
+                }
               }
             );
 
