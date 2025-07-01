@@ -94,7 +94,10 @@ const Index = () => {
           </div>
           <div className="flex items-center space-x-4">
             {user ? (
-              <Button onClick={() => navigate("/dashboard")}>
+              <Button 
+                onClick={() => navigate("/dashboard")}
+                className="bg-white text-black hover:bg-gray-100 border border-gray-200"
+              >
                 Go to Dashboard
               </Button>
             ) : (

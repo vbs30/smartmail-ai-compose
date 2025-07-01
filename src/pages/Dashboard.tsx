@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Mail, Copy, Save, History, LogOut, Crown, Loader2 } from "lucide-react";
+import { Mail, Copy, Save, History, LogOut, Crown, Loader2, ArrowLeft, CreditCard } from "lucide-react";
 import { User } from "@supabase/supabase-js";
 import ProUpgradeModal from "@/components/ProUpgradeModal";
 
@@ -241,6 +241,10 @@ const Dashboard = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-4">
+              <Button variant="ghost" onClick={() => navigate("/")}>
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Home
+              </Button>
               <div className="flex items-center space-x-2">
                 <Mail className="h-8 w-8 text-blue-600" />
                 <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -272,10 +276,16 @@ const Dashboard = () => {
                 </Button>
               )}
               {profile?.is_pro && (
-                <Button variant="outline" onClick={() => navigate("/history")}>
-                  <History className="w-4 h-4 mr-2" />
-                  History
-                </Button>
+                <>
+                  <Button variant="outline" onClick={() => navigate("/history")}>
+                    <History className="w-4 h-4 mr-2" />
+                    History
+                  </Button>
+                  <Button variant="outline" onClick={() => navigate("/billing")}>
+                    <CreditCard className="w-4 h-4 mr-2" />
+                    Billing
+                  </Button>
+                </>
               )}
               <Button variant="outline" onClick={handleSignOut}>
                 <LogOut className="w-4 h-4 mr-2" />

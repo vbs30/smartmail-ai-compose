@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -116,7 +115,35 @@ const PaymentHistory = ({ user }: PaymentHistoryProps) => {
   };
 
   const downloadReceipt = (payment: PaymentRecord) => {
-    // Simulate receipt download
+    // Create a simple receipt content
+    const receiptContent = `
+SMARTMAIL AI - PAYMENT RECEIPT
+===============================
+
+Receipt ID: ${payment.transaction_id}
+Date: ${formatDate(payment.date)}
+Plan: ${payment.plan}
+Amount: ${formatCurrency(payment.amount)}
+Status: ${payment.status}
+Payment Method: ${payment.payment_method}
+
+Thank you for your purchase!
+
+Contact: support@smartmail-ai.com
+Website: https://smartmail-ai.com
+    `.trim();
+
+    // Create and download the receipt
+    const blob = new Blob([receiptContent], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `SmartMail-AI-Receipt-${payment.transaction_id}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+
     toast({
       title: "Receipt Downloaded",
       description: `Receipt for ${payment.transaction_id} has been downloaded`,
