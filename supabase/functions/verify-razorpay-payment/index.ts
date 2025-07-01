@@ -84,13 +84,13 @@ serve(async (req) => {
       throw new Error('User not authenticated')
     }
 
-    // Update user to pro status
+    // Update user to pro status (only updating is_pro field)
     console.log('Updating user to pro status')
     const { error } = await supabaseClient
       .from('profiles')
       .update({ 
         is_pro: true,
-        pro_upgrade_date: new Date().toISOString()
+        updated_at: new Date().toISOString()
       })
       .eq('user_id', user.id)
 
