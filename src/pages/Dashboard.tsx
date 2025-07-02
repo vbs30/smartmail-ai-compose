@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -251,8 +252,8 @@ const Dashboard = () => {
                 <span className="hidden sm:inline ml-2">Back to Home</span>
               </Button>
               <div className="flex items-center space-x-2">
-                <Mail className="h-6 w-6 md:h-8 md:w-8 text-blue-600" />
-                <span className="text-lg md:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <Mail className="h-5 w-5 md:h-6 md:w-6 lg:h-8 lg:w-8 text-blue-600" />
+                <span className="text-base md:text-lg lg:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   SmartMail AI
                 </span>
               </div>
@@ -329,9 +330,9 @@ const Dashboard = () => {
           {/* Email Generation Form */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center text-lg md:text-xl">
+              <CardTitle className="flex items-center text-base md:text-lg lg:text-xl">
                 <Mail className="w-5 h-5 mr-2" />
-                <span className="text-base md:text-xl">Generate Professional Email</span>
+                <span className="text-sm md:text-base lg:text-xl">Generate Professional Email</span>
               </CardTitle>
               <CardDescription>
                 Fill in the details below to generate a professional email tailored to your needs.

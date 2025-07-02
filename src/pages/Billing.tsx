@@ -113,11 +113,11 @@ const Billing = () => {
             <div className="flex items-center space-x-4">
               <Button variant="ghost" onClick={() => navigate("/dashboard")}>
                 <ArrowLeft className="w-4 h-4" />
-                <span className="hidden sm:inline ml-2">Back to Dashboard</span>
+                <span className="hidden md:inline ml-2">Back to Dashboard</span>
               </Button>
               <div className="flex items-center space-x-2">
-                <CreditCard className="h-6 w-6 text-blue-600" />
-                <span className="text-lg md:text-xl font-bold">Billing & Subscription</span>
+                <CreditCard className="h-5 w-5 md:h-6 md:w-6 text-blue-600" />
+                <span className="text-base md:text-lg lg:text-xl font-bold">Billing & Subscription</span>
               </div>
             </div>
           </div>
@@ -125,46 +125,46 @@ const Billing = () => {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Subscription Overview */}
           <div className="lg:col-span-1 space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center text-lg">
-                  <Crown className="w-5 h-5 mr-2 text-yellow-500" />
+                <CardTitle className="flex items-center text-base md:text-lg">
+                  <Crown className="w-4 h-4 md:w-5 md:h-5 mr-2 text-yellow-500" />
                   Current Plan
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-sm">
                   Your subscription details and status
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="font-medium">Plan</span>
-                  <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500">
+                  <span className="font-medium text-sm md:text-base">Plan</span>
+                  <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-xs">
                     <Crown className="w-3 h-3 mr-1" />
                     Pro Plan
                   </Badge>
                 </div>
                 
                 <div className="flex items-center justify-between">
-                  <span className="font-medium">Status</span>
-                  <div className="flex items-center text-green-600">
+                  <span className="font-medium text-sm md:text-base">Status</span>
+                  <div className="flex items-center text-green-600 text-sm">
                     <CheckCircle className="w-4 h-4 mr-1" />
                     Active
                   </div>
                 </div>
                 
                 <div className="flex items-center justify-between">
-                  <span className="font-medium">Price</span>
-                  <span className="font-bold">₹30/month</span>
+                  <span className="font-medium text-sm md:text-base">Price</span>
+                  <span className="font-bold text-sm md:text-base">₹30/month</span>
                 </div>
                 
                 <Separator />
                 
                 <div className="space-y-2">
                   <h4 className="font-medium text-sm">Pro Features</h4>
-                  <ul className="text-sm text-gray-600 space-y-1">
+                  <ul className="text-xs md:text-sm text-gray-600 space-y-1">
                     <li className="flex items-center">
                       <CheckCircle className="w-3 h-3 mr-2 text-green-500 flex-shrink-0" />
                       <span>Unlimited email generation</span>
@@ -186,7 +186,7 @@ const Billing = () => {
                 
                 <Button 
                   variant="outline" 
-                  className="w-full"
+                  className="w-full text-sm"
                   onClick={handleUpgradeMore}
                 >
                   <Settings className="w-4 h-4 mr-2" />
@@ -198,33 +198,33 @@ const Billing = () => {
             {/* Account Information */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Account Information</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-base md:text-lg">Account Information</CardTitle>
+                <CardDescription className="text-sm">
                   Your account details and preferences
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div>
-                  <span className="text-sm font-medium text-gray-500">Name</span>
-                  <p className="font-medium break-words">{profile?.name || 'Not set'}</p>
+                  <span className="text-xs md:text-sm font-medium text-gray-500">Name</span>
+                  <p className="font-medium text-sm md:text-base break-words">{profile?.name || 'Not set'}</p>
                 </div>
                 
                 <div>
-                  <span className="text-sm font-medium text-gray-500">Email</span>
-                  <p className="font-medium break-words">{profile?.email}</p>
+                  <span className="text-xs md:text-sm font-medium text-gray-500">Email</span>
+                  <p className="font-medium text-sm md:text-base break-words">{profile?.email}</p>
                 </div>
                 
                 <div>
-                  <span className="text-sm font-medium text-gray-500">Member Since</span>
-                  <p className="font-medium flex items-center">
+                  <span className="text-xs md:text-sm font-medium text-gray-500">Member Since</span>
+                  <p className="font-medium flex items-center text-sm md:text-base">
                     <Calendar className="w-4 h-4 mr-2 text-gray-400 flex-shrink-0" />
                     <span className="break-words">{formatDate(profile?.created_at || '')}</span>
                   </p>
                 </div>
                 
                 <div>
-                  <span className="text-sm font-medium text-gray-500">Last Updated</span>
-                  <p className="font-medium break-words">{formatDate(profile?.updated_at || '')}</p>
+                  <span className="text-xs md:text-sm font-medium text-gray-500">Last Updated</span>
+                  <p className="font-medium text-sm md:text-base break-words">{formatDate(profile?.updated_at || '')}</p>
                 </div>
               </CardContent>
             </Card>

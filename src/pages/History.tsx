@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -189,7 +188,7 @@ const History = () => {
             <div className="flex items-center space-x-4">
               <Button variant="ghost" onClick={() => navigate("/dashboard")}>
                 <ArrowLeft className="w-4 h-4" />
-                <span className="hidden sm:inline ml-2">Back to Dashboard</span>
+                <span className="hidden md:inline ml-2">Back to Dashboard</span>
               </Button>
               <div className="flex items-center space-x-2">
                 <Mail className="h-6 w-6 text-blue-600" />
