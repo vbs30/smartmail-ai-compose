@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -27,9 +28,16 @@ interface Profile {
   updated_at: string;
 }
 
+interface SubscriptionInfo {
+  subscribed: boolean;
+  subscription_tier?: string;
+  subscription_end?: string;
+}
+
 const Billing = () => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [subscriptionInfo, setSubscriptionInfo] = useState<SubscriptionInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -76,10 +84,31 @@ const Billing = () => {
         navigate("/dashboard");
         return;
       }
+
+      // Get subscription details
+      await getSubscriptionInfo();
     } catch (error) {
       console.error("Error loading data:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getSubscriptionInfo = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('check-subscription', {
+        headers: {
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+        },
+      });
+
+      if (error) {
+        console.error("Error fetching subscription info:", error);
+      } else {
+        setSubscriptionInfo(data);
+      }
+    } catch (error) {
+      console.error("Error getting subscription info:", error);
     }
   };
 
@@ -158,6 +187,16 @@ const Billing = () => {
                   <span className="font-medium text-sm md:text-base">Price</span>
                   <span className="font-bold text-sm md:text-base">₹30/month</span>
                 </div>
+
+                {subscriptionInfo?.subscription_end && (
+                  <div className="flex flex-col space-y-1">
+                    <span className="font-medium text-sm md:text-base">Expires On</span>
+                    <div className="flex items-center text-blue-600 text-sm">
+                      <Calendar className="w-4 h-4 mr-1" />
+                      <span className="font-medium">{formatDate(subscriptionInfo.subscription_end)}</span>
+                    </div>
+                  </div>
+                )}
                 
                 <Separator />
                 

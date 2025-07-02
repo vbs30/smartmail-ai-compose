@@ -30,9 +30,16 @@ interface GeneratedEmail {
   body: string;
 }
 
+interface SubscriptionInfo {
+  subscribed: boolean;
+  subscription_tier?: string;
+  subscription_end?: string;
+}
+
 const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [subscriptionInfo, setSubscriptionInfo] = useState<SubscriptionInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -81,11 +88,34 @@ const Dashboard = () => {
         });
       } else {
         setProfile(profile);
+        
+        // If user is pro, get subscription details
+        if (profile.is_pro) {
+          await getSubscriptionInfo();
+        }
       }
     } catch (error) {
       console.error("Error checking user:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getSubscriptionInfo = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('check-subscription', {
+        headers: {
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+        },
+      });
+
+      if (error) {
+        console.error("Error fetching subscription info:", error);
+      } else {
+        setSubscriptionInfo(data);
+      }
+    } catch (error) {
+      console.error("Error getting subscription info:", error);
     }
   };
 
@@ -252,11 +282,11 @@ const Dashboard = () => {
               </Button>
               <div className="flex items-center space-x-2">
                 <Mail className="h-5 w-5 md:h-6 md:w-6 lg:h-8 lg:w-8 text-blue-600" />
-                <span className="text-sm sm:text-base md:text-lg lg:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <span className="text-xs sm:text-sm md:text-base lg:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   SmartMail AI
                 </span>
               </div>
-              <div className="hidden lg:flex items-center space-x-2">
+              <div className="hidden xl:flex items-center space-x-2">
                 <span className="text-sm text-gray-600">Welcome, {profile?.name || user?.email}</span>
                 {profile?.is_pro ? (
                   <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500">
@@ -272,7 +302,7 @@ const Dashboard = () => {
             </div>
             
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-4">
+            <div className="hidden xl:flex items-center space-x-4">
               {!profile?.is_pro && (
                 <Button 
                   onClick={handleUpgradeClick}
@@ -308,7 +338,7 @@ const Dashboard = () => {
           </div>
           
           {/* Mobile User Info */}
-          <div className="lg:hidden mt-2 flex items-center space-x-2">
+          <div className="xl:hidden mt-2 flex items-center space-x-2">
             <span className="text-sm text-gray-600">Welcome, {profile?.name || user?.email}</span>
             {profile?.is_pro ? (
               <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500">
@@ -329,9 +359,9 @@ const Dashboard = () => {
           {/* Email Generation Form */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center text-base md:text-lg lg:text-xl">
+              <CardTitle className="flex items-center text-sm sm:text-base md:text-lg lg:text-xl">
                 <Mail className="w-5 h-5 mr-2" />
-                <span className="text-sm md:text-base lg:text-xl">Generate Professional Email</span>
+                <span className="text-sm sm:text-base md:text-lg lg:text-xl">Generate Professional Email</span>
               </CardTitle>
               <CardDescription>
                 Fill in the details below to generate a professional email tailored to your needs.
@@ -496,6 +526,7 @@ const Dashboard = () => {
           }
         }}
         isPro={profile?.is_pro}
+        subscriptionEnd={subscriptionInfo?.subscription_end}
       />
     </div>
   );

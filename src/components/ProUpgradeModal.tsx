@@ -2,16 +2,25 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, Crown, X } from "lucide-react";
+import { Check, Crown, X, Calendar } from "lucide-react";
 
 interface ProUpgradeModalProps {
   isOpen: boolean;
   onClose: () => void;
   onUpgrade: () => void;
   isPro?: boolean;
+  subscriptionEnd?: string | null;
 }
 
-const ProUpgradeModal = ({ isOpen, onClose, onUpgrade, isPro = false }: ProUpgradeModalProps) => {
+const ProUpgradeModal = ({ isOpen, onClose, onUpgrade, isPro = false, subscriptionEnd }: ProUpgradeModalProps) => {
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-IN", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
   if (isPro) {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
@@ -22,13 +31,24 @@ const ProUpgradeModal = ({ isOpen, onClose, onUpgrade, isPro = false }: ProUpgra
               You're Already Pro!
             </DialogTitle>
             <DialogDescription>
-              You already have an active Pro subscription with unlimited access to all features.
+              You have an active Pro subscription with unlimited access to all features.
             </DialogDescription>
           </DialogHeader>
           
           <div className="py-4 text-center">
             <Crown className="w-16 h-16 mx-auto mb-4 text-yellow-500" />
             <p className="text-lg font-semibold mb-2">Enjoying Pro Benefits</p>
+            
+            {subscriptionEnd && (
+              <div className="mb-4 p-3 bg-blue-50 rounded-lg">
+                <div className="flex items-center justify-center mb-2">
+                  <Calendar className="w-4 h-4 mr-2 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-800">Subscription Valid Until</span>
+                </div>
+                <p className="text-lg font-bold text-blue-900">{formatDate(subscriptionEnd)}</p>
+              </div>
+            )}
+            
             <ul className="text-sm text-gray-600 space-y-1">
               <li>✓ Unlimited email generation</li>
               <li>✓ Save & organize emails</li>
