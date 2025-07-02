@@ -112,12 +112,12 @@ const Billing = () => {
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-4">
               <Button variant="ghost" onClick={() => navigate("/dashboard")}>
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Dashboard
+                <ArrowLeft className="w-4 h-4" />
+                <span className="hidden sm:inline ml-2">Back to Dashboard</span>
               </Button>
               <div className="flex items-center space-x-2">
                 <CreditCard className="h-6 w-6 text-blue-600" />
-                <span className="text-xl font-bold">Billing & Subscription</span>
+                <span className="text-lg md:text-xl font-bold">Billing & Subscription</span>
               </div>
             </div>
           </div>
@@ -130,7 +130,7 @@ const Billing = () => {
           <div className="lg:col-span-1 space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center">
+                <CardTitle className="flex items-center text-lg">
                   <Crown className="w-5 h-5 mr-2 text-yellow-500" />
                   Current Plan
                 </CardTitle>
@@ -166,20 +166,20 @@ const Billing = () => {
                   <h4 className="font-medium text-sm">Pro Features</h4>
                   <ul className="text-sm text-gray-600 space-y-1">
                     <li className="flex items-center">
-                      <CheckCircle className="w-3 h-3 mr-2 text-green-500" />
-                      Unlimited email generation
+                      <CheckCircle className="w-3 h-3 mr-2 text-green-500 flex-shrink-0" />
+                      <span>Unlimited email generation</span>
                     </li>
                     <li className="flex items-center">
-                      <CheckCircle className="w-3 h-3 mr-2 text-green-500" />
-                      Save email history
+                      <CheckCircle className="w-3 h-3 mr-2 text-green-500 flex-shrink-0" />
+                      <span>Save email history</span>
                     </li>
                     <li className="flex items-center">
-                      <CheckCircle className="w-3 h-3 mr-2 text-green-500" />
-                      Advanced email templates
+                      <CheckCircle className="w-3 h-3 mr-2 text-green-500 flex-shrink-0" />
+                      <span>Advanced email templates</span>
                     </li>
                     <li className="flex items-center">
-                      <CheckCircle className="w-3 h-3 mr-2 text-green-500" />
-                      Priority support
+                      <CheckCircle className="w-3 h-3 mr-2 text-green-500 flex-shrink-0" />
+                      <span>Priority support</span>
                     </li>
                   </ul>
                 </div>
@@ -198,7 +198,7 @@ const Billing = () => {
             {/* Account Information */}
             <Card>
               <CardHeader>
-                <CardTitle>Account Information</CardTitle>
+                <CardTitle className="text-lg">Account Information</CardTitle>
                 <CardDescription>
                   Your account details and preferences
                 </CardDescription>
@@ -206,25 +206,25 @@ const Billing = () => {
               <CardContent className="space-y-3">
                 <div>
                   <span className="text-sm font-medium text-gray-500">Name</span>
-                  <p className="font-medium">{profile?.name || 'Not set'}</p>
+                  <p className="font-medium break-words">{profile?.name || 'Not set'}</p>
                 </div>
                 
                 <div>
                   <span className="text-sm font-medium text-gray-500">Email</span>
-                  <p className="font-medium">{profile?.email}</p>
+                  <p className="font-medium break-words">{profile?.email}</p>
                 </div>
                 
                 <div>
                   <span className="text-sm font-medium text-gray-500">Member Since</span>
                   <p className="font-medium flex items-center">
-                    <Calendar className="w-4 h-4 mr-2 text-gray-400" />
-                    {formatDate(profile?.created_at || '')}
+                    <Calendar className="w-4 h-4 mr-2 text-gray-400 flex-shrink-0" />
+                    <span className="break-words">{formatDate(profile?.created_at || '')}</span>
                   </p>
                 </div>
                 
                 <div>
                   <span className="text-sm font-medium text-gray-500">Last Updated</span>
-                  <p className="font-medium">{formatDate(profile?.updated_at || '')}</p>
+                  <p className="font-medium break-words">{formatDate(profile?.updated_at || '')}</p>
                 </div>
               </CardContent>
             </Card>

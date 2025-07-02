@@ -13,6 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { Mail, Copy, Save, History, LogOut, Crown, Loader2, ArrowLeft, CreditCard } from "lucide-react";
 import { User } from "@supabase/supabase-js";
 import ProUpgradeModal from "@/components/ProUpgradeModal";
+import MobileNavigation from "@/components/MobileNavigation";
 
 interface Profile {
   id: string;
@@ -94,7 +95,11 @@ const Dashboard = () => {
   };
 
   const handleUpgradeClick = () => {
-    navigate("/payment");
+    if (profile?.is_pro) {
+      setShowUpgradeModal(true);
+    } else {
+      navigate("/payment");
+    }
   };
 
   const generateEmail = async () => {
@@ -240,18 +245,18 @@ const Dashboard = () => {
       <header className="bg-white border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 md:space-x-4">
               <Button variant="ghost" onClick={() => navigate("/")}>
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Home
+                <ArrowLeft className="w-4 h-4" />
+                <span className="hidden sm:inline ml-2">Back to Home</span>
               </Button>
               <div className="flex items-center space-x-2">
-                <Mail className="h-8 w-8 text-blue-600" />
-                <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <Mail className="h-6 w-6 md:h-8 md:w-8 text-blue-600" />
+                <span className="text-lg md:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   SmartMail AI
                 </span>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="hidden md:flex items-center space-x-2">
                 <span className="text-sm text-gray-600">Welcome, {profile?.name || user?.email}</span>
                 {profile?.is_pro ? (
                   <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500">
@@ -265,7 +270,9 @@ const Dashboard = () => {
                 )}
               </div>
             </div>
-            <div className="flex items-center space-x-4">
+            
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-4">
               {!profile?.is_pro && (
                 <Button 
                   onClick={handleUpgradeClick}
@@ -292,6 +299,27 @@ const Dashboard = () => {
                 Sign Out
               </Button>
             </div>
+
+            {/* Mobile Navigation */}
+            <MobileNavigation 
+              isPro={profile?.is_pro || false} 
+              onSignOut={handleSignOut}
+            />
+          </div>
+          
+          {/* Mobile User Info */}
+          <div className="md:hidden mt-2 flex items-center space-x-2">
+            <span className="text-sm text-gray-600">Welcome, {profile?.name || user?.email}</span>
+            {profile?.is_pro ? (
+              <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500">
+                <Crown className="w-3 h-3 mr-1" />
+                Pro
+              </Badge>
+            ) : (
+              <Badge variant="secondary">
+                Free ({profile?.daily_generations_count || 0}/3 today)
+              </Badge>
+            )}
           </div>
         </div>
       </header>
@@ -301,9 +329,9 @@ const Dashboard = () => {
           {/* Email Generation Form */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center">
+              <CardTitle className="flex items-center text-lg md:text-xl">
                 <Mail className="w-5 h-5 mr-2" />
-                Generate Professional Email
+                <span className="text-base md:text-xl">Generate Professional Email</span>
               </CardTitle>
               <CardDescription>
                 Fill in the details below to generate a professional email tailored to your needs.
@@ -461,7 +489,13 @@ const Dashboard = () => {
       <ProUpgradeModal
         isOpen={showUpgradeModal}
         onClose={() => setShowUpgradeModal(false)}
-        onUpgrade={handleUpgradeClick}
+        onUpgrade={() => {
+          setShowUpgradeModal(false);
+          if (!profile?.is_pro) {
+            navigate("/payment");
+          }
+        }}
+        isPro={profile?.is_pro}
       />
     </div>
   );

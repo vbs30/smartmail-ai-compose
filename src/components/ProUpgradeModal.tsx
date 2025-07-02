@@ -8,9 +8,45 @@ interface ProUpgradeModalProps {
   isOpen: boolean;
   onClose: () => void;
   onUpgrade: () => void;
+  isPro?: boolean;
 }
 
-const ProUpgradeModal = ({ isOpen, onClose, onUpgrade }: ProUpgradeModalProps) => {
+const ProUpgradeModal = ({ isOpen, onClose, onUpgrade, isPro = false }: ProUpgradeModalProps) => {
+  if (isPro) {
+    return (
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center">
+              <Crown className="w-6 h-6 mr-2 text-yellow-500" />
+              You're Already Pro!
+            </DialogTitle>
+            <DialogDescription>
+              You already have an active Pro subscription with unlimited access to all features.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4 text-center">
+            <Crown className="w-16 h-16 mx-auto mb-4 text-yellow-500" />
+            <p className="text-lg font-semibold mb-2">Enjoying Pro Benefits</p>
+            <ul className="text-sm text-gray-600 space-y-1">
+              <li>✓ Unlimited email generation</li>
+              <li>✓ Save & organize emails</li>
+              <li>✓ Email history access</li>
+              <li>✓ Priority support</li>
+            </ul>
+          </div>
+
+          <div className="flex justify-center pt-4">
+            <Button onClick={onClose}>
+              Got it!
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl">
