@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -253,11 +252,11 @@ const Dashboard = () => {
               </Button>
               <div className="flex items-center space-x-2">
                 <Mail className="h-5 w-5 md:h-6 md:w-6 lg:h-8 lg:w-8 text-blue-600" />
-                <span className="text-base md:text-lg lg:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <span className="text-sm sm:text-base md:text-lg lg:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   SmartMail AI
                 </span>
               </div>
-              <div className="hidden md:flex items-center space-x-2">
+              <div className="hidden lg:flex items-center space-x-2">
                 <span className="text-sm text-gray-600">Welcome, {profile?.name || user?.email}</span>
                 {profile?.is_pro ? (
                   <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500">
@@ -273,7 +272,7 @@ const Dashboard = () => {
             </div>
             
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-4">
+            <div className="hidden lg:flex items-center space-x-4">
               {!profile?.is_pro && (
                 <Button 
                   onClick={handleUpgradeClick}
@@ -309,7 +308,7 @@ const Dashboard = () => {
           </div>
           
           {/* Mobile User Info */}
-          <div className="md:hidden mt-2 flex items-center space-x-2">
+          <div className="lg:hidden mt-2 flex items-center space-x-2">
             <span className="text-sm text-gray-600">Welcome, {profile?.name || user?.email}</span>
             {profile?.is_pro ? (
               <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500">

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -117,19 +116,19 @@ const Billing = () => {
               </Button>
               <div className="flex items-center space-x-2">
                 <CreditCard className="h-5 w-5 md:h-6 md:w-6 text-blue-600" />
-                <span className="text-base md:text-lg lg:text-xl font-bold">Billing & Subscription</span>
+                <span className="text-sm sm:text-base md:text-lg lg:text-xl font-bold">Billing & Subscription</span>
               </div>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
+      <div className="container mx-auto px-4 py-4 md:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8">
           {/* Subscription Overview */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className="lg:col-span-1 space-y-4 lg:space-y-6">
             <Card>
-              <CardHeader>
+              <CardHeader className="pb-4">
                 <CardTitle className="flex items-center text-base md:text-lg">
                   <Crown className="w-4 h-4 md:w-5 md:h-5 mr-2 text-yellow-500" />
                   Current Plan
@@ -138,7 +137,7 @@ const Billing = () => {
                   Your subscription details and status
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3 md:space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="font-medium text-sm md:text-base">Plan</span>
                   <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-xs">
@@ -165,20 +164,20 @@ const Billing = () => {
                 <div className="space-y-2">
                   <h4 className="font-medium text-sm">Pro Features</h4>
                   <ul className="text-xs md:text-sm text-gray-600 space-y-1">
-                    <li className="flex items-center">
-                      <CheckCircle className="w-3 h-3 mr-2 text-green-500 flex-shrink-0" />
+                    <li className="flex items-start">
+                      <CheckCircle className="w-3 h-3 mr-2 text-green-500 flex-shrink-0 mt-0.5" />
                       <span>Unlimited email generation</span>
                     </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="w-3 h-3 mr-2 text-green-500 flex-shrink-0" />
+                    <li className="flex items-start">
+                      <CheckCircle className="w-3 h-3 mr-2 text-green-500 flex-shrink-0 mt-0.5" />
                       <span>Save email history</span>
                     </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="w-3 h-3 mr-2 text-green-500 flex-shrink-0" />
+                    <li className="flex items-start">
+                      <CheckCircle className="w-3 h-3 mr-2 text-green-500 flex-shrink-0 mt-0.5" />
                       <span>Advanced email templates</span>
                     </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="w-3 h-3 mr-2 text-green-500 flex-shrink-0" />
+                    <li className="flex items-start">
+                      <CheckCircle className="w-3 h-3 mr-2 text-green-500 flex-shrink-0 mt-0.5" />
                       <span>Priority support</span>
                     </li>
                   </ul>
@@ -197,32 +196,32 @@ const Billing = () => {
 
             {/* Account Information */}
             <Card>
-              <CardHeader>
+              <CardHeader className="pb-4">
                 <CardTitle className="text-base md:text-lg">Account Information</CardTitle>
                 <CardDescription className="text-sm">
                   Your account details and preferences
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
-                <div>
+                <div className="space-y-1">
                   <span className="text-xs md:text-sm font-medium text-gray-500">Name</span>
                   <p className="font-medium text-sm md:text-base break-words">{profile?.name || 'Not set'}</p>
                 </div>
                 
-                <div>
+                <div className="space-y-1">
                   <span className="text-xs md:text-sm font-medium text-gray-500">Email</span>
-                  <p className="font-medium text-sm md:text-base break-words">{profile?.email}</p>
+                  <p className="font-medium text-sm md:text-base break-all">{profile?.email}</p>
                 </div>
                 
-                <div>
+                <div className="space-y-1">
                   <span className="text-xs md:text-sm font-medium text-gray-500">Member Since</span>
-                  <p className="font-medium flex items-center text-sm md:text-base">
-                    <Calendar className="w-4 h-4 mr-2 text-gray-400 flex-shrink-0" />
-                    <span className="break-words">{formatDate(profile?.created_at || '')}</span>
-                  </p>
+                  <div className="flex items-start">
+                    <Calendar className="w-4 h-4 mr-2 text-gray-400 flex-shrink-0 mt-0.5" />
+                    <p className="font-medium text-sm md:text-base break-words">{formatDate(profile?.created_at || '')}</p>
+                  </div>
                 </div>
                 
-                <div>
+                <div className="space-y-1">
                   <span className="text-xs md:text-sm font-medium text-gray-500">Last Updated</span>
                   <p className="font-medium text-sm md:text-base break-words">{formatDate(profile?.updated_at || '')}</p>
                 </div>
