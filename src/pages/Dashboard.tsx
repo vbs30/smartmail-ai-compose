@@ -278,7 +278,6 @@ const Dashboard = () => {
             <div className="flex items-center space-x-2 md:space-x-4">
               <Button variant="ghost" onClick={() => navigate("/")}>
                 <ArrowLeft className="w-4 h-4" />
-                <span className="hidden sm:inline ml-2">Back to Home</span>
               </Button>
               <div className="flex items-center space-x-2">
                 <Mail className="h-5 w-5 md:h-6 md:w-6 lg:h-8 lg:w-8 text-blue-600" />
@@ -286,7 +285,7 @@ const Dashboard = () => {
                   SmartMail AI
                 </span>
               </div>
-              <div className="hidden xl:flex items-center space-x-2">
+              <div className="hidden lg:flex items-center space-x-2">
                 <span className="text-sm text-gray-600">Welcome, {profile?.name || user?.email}</span>
                 {profile?.is_pro ? (
                   <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500">
@@ -302,7 +301,7 @@ const Dashboard = () => {
             </div>
             
             {/* Desktop Navigation */}
-            <div className="hidden xl:flex items-center space-x-4">
+            <div className="hidden lg:flex items-center space-x-4">
               {!profile?.is_pro && (
                 <Button 
                   onClick={handleUpgradeClick}
@@ -338,7 +337,7 @@ const Dashboard = () => {
           </div>
           
           {/* Mobile User Info */}
-          <div className="xl:hidden mt-2 flex items-center space-x-2">
+          <div className="lg:hidden mt-2 flex items-center space-x-2">
             <span className="text-sm text-gray-600">Welcome, {profile?.name || user?.email}</span>
             {profile?.is_pro ? (
               <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500">
