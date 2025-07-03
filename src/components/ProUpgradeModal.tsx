@@ -37,7 +37,7 @@ const ProUpgradeModal = ({ isOpen, onClose, onUpgrade, isPro = false, subscripti
           
           <div className="py-4 text-center">
             <Crown className="w-16 h-16 mx-auto mb-4 text-yellow-500" />
-            <p className="text-lg font-semibold mb-2">Enjoying Pro Benefits</p>
+            <div className="text-lg font-semibold mb-2">Enjoying Pro Benefits</div>
             
             {subscriptionEnd && (
               <div className="mb-4 p-3 bg-blue-50 rounded-lg">
@@ -45,7 +45,7 @@ const ProUpgradeModal = ({ isOpen, onClose, onUpgrade, isPro = false, subscripti
                   <Calendar className="w-4 h-4 mr-2 text-blue-600" />
                   <span className="text-sm font-medium text-blue-800">Subscription Valid Until</span>
                 </div>
-                <p className="text-lg font-bold text-blue-900">{formatDate(subscriptionEnd)}</p>
+                <div className="text-lg font-bold text-blue-900">{formatDate(subscriptionEnd)}</div>
               </div>
             )}
             

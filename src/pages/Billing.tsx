@@ -31,6 +31,7 @@ interface Profile {
 interface SubscriptionInfo {
   subscribed: boolean;
   subscription_tier?: string;
+  subscription_start?: string;
   subscription_end?: string;
 }
 
@@ -188,9 +189,19 @@ const Billing = () => {
                   <span className="font-bold text-sm md:text-base">₹30/month</span>
                 </div>
 
+                {subscriptionInfo?.subscription_start && (
+                  <div className="space-y-1">
+                    <span className="font-medium text-sm md:text-base">Started On</span>
+                    <div className="flex items-center text-blue-600 text-sm">
+                      <Calendar className="w-4 h-4 mr-1" />
+                      <span className="font-medium">{formatDate(subscriptionInfo.subscription_start)}</span>
+                    </div>
+                  </div>
+                )}
+
                 {subscriptionInfo?.subscription_end && (
-                  <div className="flex flex-col space-y-1">
-                    <span className="font-medium text-sm md:text-base">Expires On</span>
+                  <div className="space-y-1">
+                    <span className="font-medium text-sm md:text-base">Valid Until</span>
                     <div className="flex items-center text-blue-600 text-sm">
                       <Calendar className="w-4 h-4 mr-1" />
                       <span className="font-medium">{formatDate(subscriptionInfo.subscription_end)}</span>
@@ -244,25 +255,25 @@ const Billing = () => {
               <CardContent className="space-y-3">
                 <div className="space-y-1">
                   <span className="text-xs md:text-sm font-medium text-gray-500">Name</span>
-                  <p className="font-medium text-sm md:text-base break-words">{profile?.name || 'Not set'}</p>
+                  <div className="font-medium text-sm md:text-base break-words">{profile?.name || 'Not set'}</div>
                 </div>
                 
                 <div className="space-y-1">
                   <span className="text-xs md:text-sm font-medium text-gray-500">Email</span>
-                  <p className="font-medium text-sm md:text-base break-all">{profile?.email}</p>
+                  <div className="font-medium text-sm md:text-base break-all">{profile?.email}</div>
                 </div>
                 
                 <div className="space-y-1">
                   <span className="text-xs md:text-sm font-medium text-gray-500">Member Since</span>
                   <div className="flex items-start">
                     <Calendar className="w-4 h-4 mr-2 text-gray-400 flex-shrink-0 mt-0.5" />
-                    <p className="font-medium text-sm md:text-base break-words">{formatDate(profile?.created_at || '')}</p>
+                    <div className="font-medium text-sm md:text-base break-words">{formatDate(profile?.created_at || '')}</div>
                   </div>
                 </div>
                 
                 <div className="space-y-1">
                   <span className="text-xs md:text-sm font-medium text-gray-500">Last Updated</span>
-                  <p className="font-medium text-sm md:text-base break-words">{formatDate(profile?.updated_at || '')}</p>
+                  <div className="font-medium text-sm md:text-base break-words">{formatDate(profile?.updated_at || '')}</div>
                 </div>
               </CardContent>
             </Card>

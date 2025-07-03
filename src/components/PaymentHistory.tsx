@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -200,19 +201,19 @@ Website: https://smartmail-ai.com
           <div className="text-center py-8">
             <CreditCard className="w-12 h-12 mx-auto mb-4 text-gray-300" />
             <h3 className="text-lg font-semibold mb-2">No Payment History</h3>
-            <p className="text-gray-600">
+            <div className="text-gray-600">
               Your payment history will appear here once you make your first payment.
-            </p>
+            </div>
           </div>
         ) : (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <p className="text-sm text-gray-600">
+              <div className="text-sm text-gray-600">
                 Total Payments: {payments.length}
-              </p>
-              <p className="text-sm font-medium">
+              </div>
+              <div className="text-sm font-medium">
                 Total Spent: {formatCurrency(payments.reduce((sum, p) => sum + p.amount, 0))}
-              </p>
+              </div>
             </div>
             
             <Table>
@@ -236,12 +237,14 @@ Website: https://smartmail-ai.com
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="font-medium">{payment.plan}</div>
-                      {payment.transaction_id && (
-                        <div className="text-sm text-gray-500">
-                          ID: {payment.transaction_id}
-                        </div>
-                      )}
+                      <div className="space-y-1">
+                        <div className="font-medium">{payment.plan}</div>
+                        {payment.transaction_id && (
+                          <div className="text-sm text-gray-500">
+                            ID: {payment.transaction_id}
+                          </div>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell className="font-medium">
                       {formatCurrency(payment.amount)}
