@@ -13,7 +13,7 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { Calendar, CreditCard, Download, RefreshCw, CheckCircle } from "lucide-react";
+import { CreditCard, Download, RefreshCw, CheckCircle } from "lucide-react";
 import { User } from "@supabase/supabase-js";
 
 interface PaymentRecord {
@@ -91,16 +91,6 @@ const PaymentHistory = ({ user }: PaymentHistoryProps) => {
     }).format(amount);
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-IN", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
       case 'completed':
@@ -122,7 +112,13 @@ SMARTMAIL AI - PAYMENT RECEIPT
 ===============================
 
 Receipt ID: ${payment.transaction_id}
-Date: ${formatDate(payment.date)}
+Date: ${new Date(payment.date).toLocaleDateString("en-IN", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    })}
 Plan: ${payment.plan}
 Amount: ${formatCurrency(payment.amount)}
 Status: ${payment.status}
@@ -219,7 +215,6 @@ Website: https://smartmail-ai.com
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
                   <TableHead>Plan</TableHead>
                   <TableHead>Amount</TableHead>
                   <TableHead>Status</TableHead>
@@ -230,12 +225,6 @@ Website: https://smartmail-ai.com
               <TableBody>
                 {payments.map((payment) => (
                   <TableRow key={payment.id}>
-                    <TableCell>
-                      <div className="flex items-center">
-                        <Calendar className="w-4 h-4 mr-2 text-gray-400" />
-                        {formatDate(payment.date)}
-                      </div>
-                    </TableCell>
                     <TableCell>
                       <div className="space-y-1">
                         <div className="font-medium">{payment.plan}</div>
