@@ -140,6 +140,17 @@ const Dashboard = () => {
     }
   };
 
+  const handleTemplateSelect = (template: any) => {
+    setSelectedTemplate(template);
+    setEmailType(template.category.toLowerCase().replace(' ', '_'));
+    setActiveTab("generate");
+  };
+
+  const clearTemplate = () => {
+    setSelectedTemplate(null);
+    setEmailType("");
+  };
+
   const generateEmail = async () => {
     if (!emailType || !recipientType || !businessType || !context || !tone) {
       toast({
