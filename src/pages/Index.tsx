@@ -43,7 +43,7 @@ const Index = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`
+          redirectTo: 'https://smartmail-ai.lovable.app/dashboard'
         }
       });
       
@@ -60,7 +60,7 @@ const Index = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`
+          redirectTo: 'https://smartmail-ai.lovable.app/dashboard'
         }
       });
       
