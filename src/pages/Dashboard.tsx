@@ -11,12 +11,11 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Mail, Copy, Save, History, LogOut, Crown, Loader2, ArrowLeft, CreditCard, Sparkles, FileText } from "lucide-react";
+import { Mail, Copy, Save, History, LogOut, Crown, Loader2, ArrowLeft, CreditCard, FileText } from "lucide-react";
 import { User } from "@supabase/supabase-js";
 import ProUpgradeModal from "@/components/ProUpgradeModal";
 import MobileNavigation from "@/components/MobileNavigation";
 import EmailTemplatesLibrary from "@/components/EmailTemplatesLibrary";
-import AdvancedPersonalization from "@/components/AdvancedPersonalization";
 
 interface Profile {
   id: string;
@@ -61,7 +60,6 @@ const Dashboard = () => {
   // Additional state for premium features
   const [activeTab, setActiveTab] = useState("generate");
   const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
-  const [personalizationFields, setPersonalizationFields] = useState<any[]>([]);
 
   useEffect(() => {
     checkUser();
@@ -169,26 +167,12 @@ const Dashboard = () => {
     setGenerating(true);
     
     try {
-      // Prepare enhanced context with personalization
-      let enhancedContext = context;
-      
-      if (profile?.is_pro && personalizationFields.length > 0) {
-        const personalizationData = personalizationFields
-          .filter(field => field.value.trim())
-          .map(field => `${field.label}: ${field.value}`)
-          .join('\n');
-        
-        if (personalizationData) {
-          enhancedContext = `${context}\n\nPersonalization Details:\n${personalizationData}`;
-        }
-      }
-
       // Use template if selected
       let emailTypeToUse = emailType;
-      let contextToUse = enhancedContext;
+      let contextToUse = context;
       
       if (selectedTemplate && profile?.is_pro) {
-        contextToUse = `Template: ${selectedTemplate.title}\nSubject Template: ${selectedTemplate.subject}\nBody Template: ${selectedTemplate.body}\n\nCustomization Context: ${enhancedContext}`;
+        contextToUse = `Template: ${selectedTemplate.title}\nSubject Template: ${selectedTemplate.subject}\nBody Template: ${selectedTemplate.body}\n\nCustomization Context: ${context}`;
         emailTypeToUse = selectedTemplate.category.toLowerCase().replace(' ', '_');
       }
 
@@ -401,9 +385,8 @@ const Dashboard = () => {
 
       <div className="container mx-auto px-4 py-8">
         {profile?.is_pro ? (
-          // Pro User Layout with Tabs
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="generate" className="flex items-center space-x-2">
                 <Mail className="w-4 h-4" />
                 <span>Generate</span>
@@ -411,10 +394,6 @@ const Dashboard = () => {
               <TabsTrigger value="templates" className="flex items-center space-x-2">
                 <FileText className="w-4 h-4" />
                 <span>Templates</span>
-              </TabsTrigger>
-              <TabsTrigger value="personalize" className="flex items-center space-x-2">
-                <Sparkles className="w-4 h-4" />
-                <span>Personalize</span>
               </TabsTrigger>
             </TabsList>
 
@@ -519,7 +498,7 @@ const Dashboard = () => {
                         </>
                       ) : (
                         <>
-                          <Sparkles className="w-4 h-4 mr-2" />
+                          <Mail className="w-4 h-4 mr-2" />
                           Generate Pro Email
                         </>
                       )}
@@ -595,16 +574,8 @@ const Dashboard = () => {
             <TabsContent value="templates">
               <EmailTemplatesLibrary onSelectTemplate={handleTemplateSelect} />
             </TabsContent>
-
-            <TabsContent value="personalize">
-              <AdvancedPersonalization 
-                onPersonalizationChange={setPersonalizationFields}
-                initialFields={personalizationFields}
-              />
-            </TabsContent>
           </Tabs>
         ) : (
-          // Free User Layout (Original)
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Email Generation Form */}
             <Card>
