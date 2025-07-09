@@ -309,7 +309,7 @@ const Index = () => {
       <footer className="container mx-auto px-4 py-8 border-t">
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <div className="text-center md:text-left text-gray-600">
-            <p>&copy; 2024 SmartMail AI. All rights reserved.</p>
+            <p>&copy; 2025 SmartMail AI. All rights reserved.</p>
           </div>
           <div className="flex space-x-6 text-sm">
             <a 
