@@ -137,9 +137,14 @@ const Index = () => {
             </Button>
           </div>
           
-          <div className="flex items-center justify-center mt-6 text-sm text-gray-500">
-            <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
-            Free forever • No credit card required
+          <div className="flex flex-col items-center justify-center mt-6 text-sm text-gray-500 space-y-1">
+            <div className="flex items-center">
+              <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
+              Free forever • No credit card required
+            </div>
+            <div className="text-xs text-gray-400">
+              Created by Vinayak Suryavanshi
+            </div>
           </div>
         </div>
       </section>

@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Crown, CreditCard, Lock, QrCode, Smartphone, Wallet, CreditCard as CardIcon } from "lucide-react";
+import { ArrowLeft, Crown, CreditCard, Lock, QrCode, Smartphone, Wallet, CreditCard as CardIcon, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -247,6 +247,18 @@ const PaymentPage = () => {
                     Advanced features
                   </li>
                 </ul>
+              </div>
+
+              {/* Owner Information */}
+              <div className="bg-blue-50 p-4 rounded-lg mt-6">
+                <div className="flex items-center mb-2">
+                  <User className="w-4 h-4 mr-2 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-800">Payment Information</span>
+                </div>
+                <p className="text-sm text-blue-700">
+                  This payment will be processed by <strong>Vinayak Suryavanshi</strong>, 
+                  the owner and developer of SmartMail AI.
+                </p>
               </div>
             </CardContent>
           </Card>
