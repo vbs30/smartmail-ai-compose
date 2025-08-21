@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,7 +21,58 @@ import { User } from "@supabase/supabase-js";
 const Index = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const navigate = useNavigate();
+
+  const testimonials = [
+    {
+      text: "This app has completely transformed my daily workflow. I used to spend hours crafting emails, but now I generate professional content in seconds. The AI understands context perfectly and saves me at least 2 hours every day. Absolutely game-changing for my productivity!",
+      name: "Manoj Kumar",
+      title: "Assistant Manager"
+    },
+    {
+      text: "SmartMail AI is incredible! The quality of emails it generates is outstanding. My response rates have improved by 40% since I started using it. The different tone options help me communicate effectively with various clients. Worth every penny!",
+      name: "Priya Sharma",
+      title: "Sales Executive"
+    },
+    {
+      text: "I was skeptical about AI writing tools, but SmartMail AI proved me wrong. It creates emails that sound exactly like my writing style. The personalization features are spot-on, and my team productivity has increased significantly.",
+      name: "Rahul Mehta",
+      title: "Marketing Director"
+    },
+    {
+      text: "As a busy entrepreneur, time is everything. SmartMail AI has become my secret weapon for client communications. The emails are professional, engaging, and perfectly tailored. I can't imagine working without it now!",
+      name: "Sneha Patel",
+      title: "CEO, TechStart"
+    },
+    {
+      text: "The Pro version is absolutely worth it! Unlimited email generation has streamlined our entire customer support process. Our team response time has improved by 60%, and customer satisfaction scores are at an all-time high.",
+      name: "Amit Singh",
+      title: "Customer Success Manager"
+    },
+    {
+      text: "SmartMail AI understands business context better than any tool I've used. From follow-ups to cold outreach, every email feels personal and professional. It's like having a professional copywriter on demand 24/7.",
+      name: "Kavya Reddy",
+      title: "Business Development Head"
+    }
+  ];
+
+  // Auto-scroll functionality
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % testimonials.length);
+    }, 4000); // Change slide every 4 seconds
+
+    return () => clearInterval(timer);
+  }, [testimonials.length]);
+
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % testimonials.length);
+  }, [testimonials.length]);
+
+  const prevSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  }, [testimonials.length]);
 
   useEffect(() => {
     checkUser();
@@ -291,67 +342,64 @@ const Index = () => {
           <p className="text-xl text-gray-600">Join thousands of satisfied professionals</p>
         </div>
         
-        <div className="relative max-w-6xl mx-auto">
-          <div className="overflow-hidden">
-            <div className="flex space-x-6 animate-pulse">
-              {[
-                {
-                  text: "This app has completely transformed my daily workflow. I used to spend hours crafting emails, but now I generate professional content in seconds. The AI understands context perfectly and saves me at least 2 hours every day. Absolutely game-changing for my productivity!",
-                  name: "Manoj Kumar",
-                  title: "Assistant Manager"
-                },
-                {
-                  text: "SmartMail AI is incredible! The quality of emails it generates is outstanding. My response rates have improved by 40% since I started using it. The different tone options help me communicate effectively with various clients. Worth every penny!",
-                  name: "Priya Sharma",
-                  title: "Sales Executive"
-                },
-                {
-                  text: "I was skeptical about AI writing tools, but SmartMail AI proved me wrong. It creates emails that sound exactly like my writing style. The personalization features are spot-on, and my team productivity has increased significantly.",
-                  name: "Rahul Mehta",
-                  title: "Marketing Director"
-                },
-                {
-                  text: "As a busy entrepreneur, time is everything. SmartMail AI has become my secret weapon for client communications. The emails are professional, engaging, and perfectly tailored. I can't imagine working without it now!",
-                  name: "Sneha Patel",
-                  title: "CEO, TechStart"
-                },
-                {
-                  text: "The Pro version is absolutely worth it! Unlimited email generation has streamlined our entire customer support process. Our team response time has improved by 60%, and customer satisfaction scores are at an all-time high.",
-                  name: "Amit Singh",
-                  title: "Customer Success Manager"
-                },
-                {
-                  text: "SmartMail AI understands business context better than any tool I've used. From follow-ups to cold outreach, every email feels personal and professional. It's like having a professional copywriter on demand 24/7.",
-                  name: "Kavya Reddy",
-                  title: "Business Development Head"
-                }
-              ].map((testimonial, index) => (
-                <Card 
-                  key={index} 
-                  className="min-w-[400px] border-2 hover:border-blue-200 hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer bg-white"
-                >
-                  <CardContent className="p-6">
-                    <blockquote className="italic text-gray-700 mb-4 leading-relaxed">
-                      "{testimonial.text}"
-                    </blockquote>
-                    <div className="border-t pt-4">
-                      <p className="font-semibold text-gray-900">{testimonial.name}</p>
-                      <p className="text-sm text-gray-600">{testimonial.title}</p>
-                    </div>
-                  </CardContent>
-                </Card>
+        <div className="relative max-w-4xl mx-auto">
+          <div className="overflow-hidden rounded-lg">
+            <div 
+              className="flex transition-transform duration-500 ease-in-out"
+              style={{ 
+                transform: `translateX(-${currentSlide * 100}%)`,
+                width: `${testimonials.length * 100}%`
+              }}
+            >
+              {testimonials.map((testimonial, index) => (
+                <div key={index} className="w-full flex-shrink-0 px-4">
+                  <Card className="border-2 hover:border-blue-200 hover:shadow-lg transition-all duration-300 bg-white max-w-2xl mx-auto">
+                    <CardContent className="p-8">
+                      <blockquote className="italic text-gray-700 mb-6 leading-relaxed text-lg">
+                        "{testimonial.text}"
+                      </blockquote>
+                      <div className="border-t pt-6 text-center">
+                        <p className="font-semibold text-gray-900 text-lg">{testimonial.name}</p>
+                        <p className="text-sm text-gray-600 mt-1">{testimonial.title}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
               ))}
             </div>
           </div>
           
           {/* Navigation Buttons */}
           <div className="flex justify-center mt-8 space-x-4">
-            <Button variant="outline" size="sm" className="hover:bg-blue-50">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="hover:bg-blue-50 hover:border-blue-300"
+              onClick={prevSlide}
+            >
               <ArrowRight className="h-4 w-4 rotate-180" />
             </Button>
-            <Button variant="outline" size="sm" className="hover:bg-blue-50">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="hover:bg-blue-50 hover:border-blue-300"
+              onClick={nextSlide}
+            >
               <ArrowRight className="h-4 w-4" />
             </Button>
+          </div>
+          
+          {/* Dots indicator */}
+          <div className="flex justify-center mt-4 space-x-2">
+            {testimonials.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentSlide(index)}
+                className={`w-2 h-2 rounded-full transition-colors ${
+                  index === currentSlide ? 'bg-blue-600' : 'bg-gray-300'
+                }`}
+              />
+            ))}
           </div>
         </div>
       </section>
