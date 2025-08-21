@@ -284,6 +284,78 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Testimonials Section */}
+      <section className="container mx-auto px-4 py-20">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold mb-4">What Our Users Say</h2>
+          <p className="text-xl text-gray-600">Join thousands of satisfied professionals</p>
+        </div>
+        
+        <div className="relative max-w-6xl mx-auto">
+          <div className="overflow-hidden">
+            <div className="flex space-x-6 animate-pulse">
+              {[
+                {
+                  text: "This app has completely transformed my daily workflow. I used to spend hours crafting emails, but now I generate professional content in seconds. The AI understands context perfectly and saves me at least 2 hours every day. Absolutely game-changing for my productivity!",
+                  name: "Manoj Kumar",
+                  title: "Assistant Manager"
+                },
+                {
+                  text: "SmartMail AI is incredible! The quality of emails it generates is outstanding. My response rates have improved by 40% since I started using it. The different tone options help me communicate effectively with various clients. Worth every penny!",
+                  name: "Priya Sharma",
+                  title: "Sales Executive"
+                },
+                {
+                  text: "I was skeptical about AI writing tools, but SmartMail AI proved me wrong. It creates emails that sound exactly like my writing style. The personalization features are spot-on, and my team productivity has increased significantly.",
+                  name: "Rahul Mehta",
+                  title: "Marketing Director"
+                },
+                {
+                  text: "As a busy entrepreneur, time is everything. SmartMail AI has become my secret weapon for client communications. The emails are professional, engaging, and perfectly tailored. I can't imagine working without it now!",
+                  name: "Sneha Patel",
+                  title: "CEO, TechStart"
+                },
+                {
+                  text: "The Pro version is absolutely worth it! Unlimited email generation has streamlined our entire customer support process. Our team response time has improved by 60%, and customer satisfaction scores are at an all-time high.",
+                  name: "Amit Singh",
+                  title: "Customer Success Manager"
+                },
+                {
+                  text: "SmartMail AI understands business context better than any tool I've used. From follow-ups to cold outreach, every email feels personal and professional. It's like having a professional copywriter on demand 24/7.",
+                  name: "Kavya Reddy",
+                  title: "Business Development Head"
+                }
+              ].map((testimonial, index) => (
+                <Card 
+                  key={index} 
+                  className="min-w-[400px] border-2 hover:border-blue-200 hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer bg-white"
+                >
+                  <CardContent className="p-6">
+                    <blockquote className="italic text-gray-700 mb-4 leading-relaxed">
+                      "{testimonial.text}"
+                    </blockquote>
+                    <div className="border-t pt-4">
+                      <p className="font-semibold text-gray-900">{testimonial.name}</p>
+                      <p className="text-sm text-gray-600">{testimonial.title}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+          
+          {/* Navigation Buttons */}
+          <div className="flex justify-center mt-8 space-x-4">
+            <Button variant="outline" size="sm" className="hover:bg-blue-50">
+              <ArrowRight className="h-4 w-4 rotate-180" />
+            </Button>
+            <Button variant="outline" size="sm" className="hover:bg-blue-50">
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="container mx-auto px-4 py-20">
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-12 text-center text-white">
