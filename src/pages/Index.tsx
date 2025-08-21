@@ -81,7 +81,7 @@ const Index = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % testimonials.length);
-    }, 8000); // Change slide every 8 seconds (very slow)
+    }, 20000); // Change slide every 20 seconds (very slow for reading)
 
     return () => clearInterval(timer);
   }, [testimonials.length]);
