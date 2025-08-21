@@ -54,6 +54,26 @@ const Index = () => {
       text: "SmartMail AI understands business context better than any tool I've used. From follow-ups to cold outreach, every email feels personal and professional. It's like having a professional copywriter on demand 24/7.",
       name: "Kavya Reddy",
       title: "Business Development Head"
+    },
+    {
+      text: "This tool has revolutionized how I handle client communications in my consulting business. The AI generates emails that perfectly match my professional tone and have significantly improved my client relationships. Highly recommended!",
+      name: "James Wilson",
+      title: "Business Consultant, USA"
+    },
+    {
+      text: "Working in international sales, I need emails that work across different cultures. SmartMail AI creates culturally appropriate content that resonates with clients worldwide. My conversion rates have never been better!",
+      name: "Arjun Krishnan",
+      title: "International Sales Director"
+    },
+    {
+      text: "The efficiency gains are remarkable! What used to take me 30 minutes per email now takes 30 seconds. The quality is consistently professional, and my team has adopted this as our standard tool for all client communications.",
+      name: "Sarah Chen",
+      title: "Operations Manager, Singapore"
+    },
+    {
+      text: "SmartMail AI has become indispensable for my digital marketing agency. We handle multiple clients with different brand voices, and this tool adapts perfectly to each one. Our productivity has increased by 300% since implementation!",
+      name: "Vikram Gupta",
+      title: "Founder, Digital Marketing Agency"
     }
   ];
 
@@ -61,7 +81,7 @@ const Index = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % testimonials.length);
-    }, 2500); // Change slide every 2.5 seconds
+    }, 8000); // Change slide every 8 seconds (very slow)
 
     return () => clearInterval(timer);
   }, [testimonials.length]);
