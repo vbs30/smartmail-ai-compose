@@ -61,7 +61,7 @@ const Index = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % testimonials.length);
-    }, 4000); // Change slide every 4 seconds
+    }, 8000); // Change slide every 8 seconds (slower)
 
     return () => clearInterval(timer);
   }, [testimonials.length]);
@@ -387,19 +387,6 @@ const Index = () => {
             >
               <ArrowRight className="h-4 w-4" />
             </Button>
-          </div>
-          
-          {/* Dots indicator */}
-          <div className="flex justify-center mt-4 space-x-2">
-            {testimonials.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentSlide(index)}
-                className={`w-2 h-2 rounded-full transition-colors ${
-                  index === currentSlide ? 'bg-blue-600' : 'bg-gray-300'
-                }`}
-              />
-            ))}
           </div>
         </div>
       </section>
