@@ -1,5 +1,5 @@
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,7 +21,6 @@ import { User } from "@supabase/supabase-js";
 const Index = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [currentSlide, setCurrentSlide] = useState(0);
   const navigate = useNavigate();
 
   const testimonials = [
@@ -76,23 +75,6 @@ const Index = () => {
       title: "Founder, Digital Marketing Agency"
     }
   ];
-
-  // Auto-scroll functionality
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % testimonials.length);
-    }, 20000); // Change slide every 20 seconds (very slow for reading)
-
-    return () => clearInterval(timer);
-  }, [testimonials.length]);
-
-  const nextSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev + 1) % testimonials.length);
-  }, [testimonials.length]);
-
-  const prevSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-  }, [testimonials.length]);
 
   useEffect(() => {
     checkUser();
@@ -362,51 +344,40 @@ const Index = () => {
           <p className="text-xl text-gray-600">Join thousands of satisfied professionals</p>
         </div>
         
-        <div className="relative max-w-4xl mx-auto">
-          <div className="overflow-hidden rounded-lg">
-            <div 
-              className="flex transition-transform duration-500 ease-in-out"
-              style={{ 
-                transform: `translateX(-${currentSlide * 100}%)`,
-                width: `${testimonials.length * 100}%`
-              }}
-            >
-              {testimonials.map((testimonial, index) => (
-                <div key={index} className="w-full flex-shrink-0 px-4">
-                  <Card className="border-2 hover:border-blue-200 hover:shadow-lg transition-all duration-300 bg-white max-w-2xl mx-auto">
-                    <CardContent className="p-8">
-                      <blockquote className="italic text-gray-700 mb-6 leading-relaxed text-lg">
-                        "{testimonial.text}"
-                      </blockquote>
-                      <div className="border-t pt-6 text-center">
-                        <p className="font-semibold text-gray-900 text-lg">{testimonial.name}</p>
-                        <p className="text-sm text-gray-600 mt-1">{testimonial.title}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          {/* Navigation Buttons */}
-          <div className="flex justify-center mt-8 space-x-4">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="hover:bg-blue-50 hover:border-blue-300"
-              onClick={prevSlide}
-            >
-              <ArrowRight className="h-4 w-4 rotate-180" />
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="hover:bg-blue-50 hover:border-blue-300"
-              onClick={nextSlide}
-            >
-              <ArrowRight className="h-4 w-4" />
-            </Button>
+        <div className="relative max-w-6xl mx-auto overflow-hidden">
+          <div className="flex animate-scroll gap-8">
+            {/* First set of testimonials */}
+            {testimonials.map((testimonial, index) => (
+              <div key={`first-${index}`} className="flex-shrink-0 w-96">
+                <Card className="border-2 hover:border-blue-200 hover:shadow-lg transition-all duration-300 bg-white h-full">
+                  <CardContent className="p-8">
+                    <blockquote className="italic text-gray-700 mb-6 leading-relaxed">
+                      "{testimonial.text}"
+                    </blockquote>
+                    <div className="border-t pt-6 text-center">
+                      <p className="font-semibold text-gray-900">{testimonial.name}</p>
+                      <p className="text-sm text-gray-600 mt-1">{testimonial.title}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            ))}
+            {/* Duplicate set for seamless loop */}
+            {testimonials.map((testimonial, index) => (
+              <div key={`second-${index}`} className="flex-shrink-0 w-96">
+                <Card className="border-2 hover:border-blue-200 hover:shadow-lg transition-all duration-300 bg-white h-full">
+                  <CardContent className="p-8">
+                    <blockquote className="italic text-gray-700 mb-6 leading-relaxed">
+                      "{testimonial.text}"
+                    </blockquote>
+                    <div className="border-t pt-6 text-center">
+                      <p className="font-semibold text-gray-900">{testimonial.name}</p>
+                      <p className="text-sm text-gray-600 mt-1">{testimonial.title}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            ))}
           </div>
         </div>
       </section>
