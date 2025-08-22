@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import { User } from "@supabase/supabase-js";
 
 const Index = () => {
+  console.log("Index component loaded - no currentSlide references");
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
