@@ -74,6 +74,16 @@ const Index = () => {
       text: "SmartMail AI has become indispensable for my digital marketing agency. We handle multiple clients with different brand voices, and this tool adapts perfectly to each one. Our productivity has increased by 300% since implementation!",
       name: "Vikram Gupta",
       title: "Founder, Digital Marketing Agency"
+    },
+    {
+      text: "I manage a team of 50+ people and email communication is crucial for our operations. SmartMail AI has standardized our communication quality while reducing the time spent on drafting. Our client feedback has been overwhelmingly positive since we started using it.",
+      name: "Ananya Iyer",
+      title: "Operations Head, Tech Solutions"
+    },
+    {
+      text: "As a freelance consultant working with global clients, I need emails that are both professional and culturally sensitive. SmartMail AI delivers exactly that. My client acquisition rate has improved by 65% and I save 3 hours daily on email writing.",
+      name: "Michael Rodriguez",
+      title: "Business Consultant, Mexico"
     }
   ];
 
