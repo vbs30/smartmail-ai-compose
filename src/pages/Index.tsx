@@ -27,63 +27,63 @@ const Index = () => {
   const testimonials = [
     {
       text: "This app has completely transformed my daily workflow. I used to spend hours crafting emails, but now I generate professional content in seconds. The AI understands context perfectly and saves me at least 2 hours every day. Absolutely game-changing for my productivity!",
-      name: "Manoj Kumar",
-      title: "Assistant Manager"
+      name: "Sarah Chen",
+      title: "Marketing Manager"
     },
     {
       text: "SmartMail AI is incredible! The quality of emails it generates is outstanding. My response rates have improved by 40% since I started using it. The different tone options help me communicate effectively with various clients. Worth every penny!",
-      name: "Priya Sharma",
+      name: "James Wilson",
       title: "Sales Executive"
     },
     {
       text: "I was skeptical about AI writing tools, but SmartMail AI proved me wrong. It creates emails that sound exactly like my writing style. The personalization features are spot-on, and my team productivity has increased significantly.",
-      name: "Rahul Mehta",
-      title: "Marketing Director"
+      name: "Emma Thompson",
+      title: "Operations Director"
     },
     {
       text: "As a busy entrepreneur, time is everything. SmartMail AI has become my secret weapon for client communications. The emails are professional, engaging, and perfectly tailored. I can't imagine working without it now!",
-      name: "Sneha Patel",
-      title: "CEO, TechStart"
+      name: "Carlos Rodriguez",
+      title: "Business Owner"
     },
     {
       text: "The Pro version is absolutely worth it! Unlimited email generation has streamlined our entire customer support process. Our team response time has improved by 60%, and customer satisfaction scores are at an all-time high.",
-      name: "Amit Singh",
+      name: "Maria Santos",
       title: "Customer Success Manager"
     },
     {
       text: "SmartMail AI understands business context better than any tool I've used. From follow-ups to cold outreach, every email feels personal and professional. It's like having a professional copywriter on demand 24/7.",
-      name: "Kavya Reddy",
-      title: "Business Development Head"
+      name: "David Kim",
+      title: "Business Development Lead"
     },
     {
       text: "This tool has revolutionized how I handle client communications in my consulting business. The AI generates emails that perfectly match my professional tone and have significantly improved my client relationships. Highly recommended!",
-      name: "James Wilson",
-      title: "Business Consultant, USA"
+      name: "Sophie Mueller",
+      title: "Business Consultant"
     },
     {
-      text: "Working in international sales, I need emails that work across different cultures. SmartMail AI creates culturally appropriate content that resonates with clients worldwide. My conversion rates have never been better!",
-      name: "Arjun Krishnan",
-      title: "International Sales Director"
+      text: "Working in international markets, I need emails that work across different cultures. SmartMail AI creates culturally appropriate content that resonates with clients worldwide. My conversion rates have never been better!",
+      name: "Ahmed Hassan",
+      title: "International Sales Manager"
     },
     {
       text: "The efficiency gains are remarkable! What used to take me 30 minutes per email now takes 30 seconds. The quality is consistently professional, and my team has adopted this as our standard tool for all client communications.",
-      name: "Sarah Chen",
-      title: "Operations Manager, Singapore"
+      name: "Yuki Tanaka",
+      title: "Project Manager"
     },
     {
-      text: "SmartMail AI has become indispensable for my digital marketing agency. We handle multiple clients with different brand voices, and this tool adapts perfectly to each one. Our productivity has increased by 300% since implementation!",
-      name: "Vikram Gupta",
-      title: "Founder, Digital Marketing Agency"
+      text: "SmartMail AI has become indispensable for my agency. We handle multiple clients with different brand voices, and this tool adapts perfectly to each one. Our productivity has increased by 300% since implementation!",
+      name: "Alexander Petrov",
+      title: "Digital Marketing Specialist"
     },
     {
-      text: "I manage a team of 50+ people and email communication is crucial for our operations. SmartMail AI has standardized our communication quality while reducing the time spent on drafting. Our client feedback has been overwhelmingly positive since we started using it.",
-      name: "Ananya Iyer",
-      title: "Operations Head, Tech Solutions"
+      text: "I manage email communications for multiple departments and SmartMail AI has standardized our quality while reducing time spent on drafting. Our client feedback has been overwhelmingly positive since we started using it.",
+      name: "Lisa Anderson",
+      title: "Operations Manager"
     },
     {
       text: "As a freelance consultant working with global clients, I need emails that are both professional and culturally sensitive. SmartMail AI delivers exactly that. My client acquisition rate has improved by 65% and I save 3 hours daily on email writing.",
-      name: "Michael Rodriguez",
-      title: "Business Consultant, Mexico"
+      name: "Pierre Dubois",
+      title: "Freelance Consultant"
     }
   ];
 
